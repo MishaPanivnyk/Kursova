@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MultiMap Demo</title>
+</head>
+<body>
+    <h1>MultiMap Demo</h1>
+    <button onclick="addValues()">Add Values</button>
+    <button onclick="eraseValues()">Erase Values</button>
+    <button onclick="findValues()">Find Values</button>
+    <button onclick="checkSize()">Check Size</button>
+    <button onclick="checkEmpty()">Check Empty</button>
+    <button onclick="swapMaps()">Swap Maps</button>
+    <button onclick="applyFunction()">Apply Function</button>
+
+    <script>
+ class MultiMap {
+    constructor() {
+        this.map = new Map();
+    }
+
+    // Додати елемент з наданим ключем у словник
+    include(key, value) {
+        if (!this.map.has(key)) {
+            this.map.set(key, []);
+        }
+        this.map.get(key).push(value);
+    }
+
+    // Вилучити всі елементи з наданим ключем із словника і повернути кількість вилучених елементів
+    erase(key) {
+        if (!this.map.has(key)) {
+            return 0;
+        }
+        const count = this.map.get(key).length;
+        this.map.delete(key);
+        return count;
+    }
+
+    // Знайти наступне значення, яке відповідає наданому ключу
+    find(key) {
+        return this.map.get(key);
+    }
+
+    // Порівняння
+    equals(otherMap) {
+        if (this.map.size !== otherMap.map.size) {
+            return false;
+        }
+        for (const [key, value] of this.map.entries()) {
+            if (!otherMap.map.has(key) || !value.every((v, i) => v === otherMap.map.get(key)[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Кількість елементів
+    size() {
+        let count = 0;
+        for (const values of this.map.values()) {
+            count += values.length;
+        }
+        return count;
+    }
+
+    // Повертає значення true, якщо словник порожній
+    empty() {
+        return this.map.size === 0;
+    }
+
+    // Обмін значеннями з іншим словником
+    swap(otherMap) {
+        const tempMap = new Map(this.map);
+        this.map = new Map(otherMap.map);
+        otherMap.map = tempMap;
+    }
+
+    // Змінювання елементів згідно з наданою процедурою
+    for_each(callback) {
+        for (const [key, values] of this.map.entries()) {
+            this.map.set(key, values.map(callback));
+        }
+    }
+}
+        
+        // Функції для взаємодії з класом MultiMap
+        const multiMap = new MultiMap();
+
+        function addValues() {
+            const key = prompt('Enter key:');
+            const value = prompt('Enter value:');
+            multiMap.include(key, value);
+            alert(`Value ${value} added to key ${key}`);
+        }
+
+        function eraseValues() {
+            const key = prompt('Enter key to erase:');
+            const count = multiMap.erase(key);
+            alert(`Erased ${count} values with key ${key}`);
+        }
+
+        function findValues() {
+            const key = prompt('Enter key to find:');
+            const values = multiMap.find(key);
+            alert(`Values for key ${key}: ${values}`);
+        }
+
+        function checkSize() {
+            alert(`Size of MultiMap: ${multiMap.size()}`);
+        }
+
+        function checkEmpty() {
+            alert(`MultiMap is empty: ${multiMap.empty()}`);
+        }
+
+        function swapMaps() {
+            const otherMap = new MultiMap();
+            // Add some values to otherMap
+            multiMap.swap(otherMap);
+            alert('Maps swapped!');
+        }
+
+        function applyFunction() {
+            // Example function to add 10 to each value
+            multiMap.for_each(value => parseInt(value) + 10);
+            alert('Function applied to all values!');
+        }
+    </script>
+</body>
+</html>
